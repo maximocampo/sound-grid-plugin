@@ -25,7 +25,7 @@ void SoundCircle::update (double currentTime)
 {
     if (! isLoaded) return;
 
-    if (hasRecording && ! isCarried && ! isRecording && ! movementPaused)
+    if (hasRecording && ! isRecording && ! movementPaused)
         applyRecordedMovement (currentTime);
 
     if (isRecording)

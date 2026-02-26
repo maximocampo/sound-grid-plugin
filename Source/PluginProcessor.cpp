@@ -233,7 +233,7 @@ int SoundGridProcessor::addSample (const juce::String& filePath)
     reader->read (&decoded, 0, (int) reader->lengthInSamples, 0, true, true);
 
     auto voice = std::make_unique<SampleVoice>();
-    if (! voice->loadFromBuffer (decoded, reader->sampleRate, currentSampleRate))
+    if (! voice->loadFromBuffer (decoded, reader->sampleRate))
         return -1;
 
     auto circle = std::make_unique<SoundCircle>();
@@ -244,6 +244,11 @@ int SoundGridProcessor::addSample (const juce::String& filePath)
     circle->name = baseName;
     circle->colourIndex = (int) circles.size();
     circle->circleColour = SoundCircle::getPaletteColour (circle->colourIndex);
+
+    // Random position
+    juce::Random rng;
+    circle->pos.x = rng.nextFloat() * 0.84f + 0.08f;
+    circle->pos.y = rng.nextFloat() * 0.70f + 0.10f;
 
     auto filter = std::make_unique<CircleFilter>();
     auto coeffs = juce::dsp::IIR::Coefficients<float>::makeHighPass (currentSampleRate, 20.0);
@@ -257,11 +262,6 @@ int SoundGridProcessor::addSample (const juce::String& filePath)
     voices.push_back (std::move (voice));
     filters.push_back (std::move (filter));
     return index;
-}
-
-void SoundGridProcessor::removeSample (int index)
-{
-    removeCircle (index);  // unified removal for both sample and input circles
 }
 
 void SoundGridProcessor::removeAllSamples()
@@ -301,14 +301,6 @@ void SoundGridProcessor::playAllSamples()
     for (auto& v : voices)
         if (! v->isPlaying())
             v->play();
-}
-
-void SoundGridProcessor::updateVoiceParams (int index, float gain, float pan)
-{
-    juce::ScopedLock sl (lock);
-    if (index < 0 || index >= (int) voices.size()) return;
-    voices[index]->setGain (gain);
-    voices[index]->setPan (pan);
 }
 
 int SoundGridProcessor::addInputCircle (int busIndex)

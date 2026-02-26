@@ -43,14 +43,11 @@ public:
 
     // Thread-safe interface for UI
     int addSample (const juce::String& filePath);
-    void removeSample (int index);
     void removeAllSamples();
     void playSample (int index);
     void stopSample (int index);
     void stopAllSamples();
     void playAllSamples();
-    void updateVoiceParams (int index, float gain, float pan);
-
     // Circles and voices - accessed from UI thread with lock
     juce::CriticalSection lock;
     std::vector<std::unique_ptr<SoundCircle>> circles;
@@ -67,6 +64,13 @@ public:
     std::vector<juce::String> availableFiles;
 
     double getCurrentTime() const;
+
+    static bool isAudioFile (const juce::String& path)
+    {
+        auto ext = juce::File (path).getFileExtension().toLowerCase();
+        return ext == ".wav" || ext == ".mp3" || ext == ".aif" ||
+               ext == ".aiff" || ext == ".ogg" || ext == ".flac";
+    }
 
 private:
     double currentSampleRate = 44100.0;

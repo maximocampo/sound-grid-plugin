@@ -277,15 +277,7 @@ void SidebarComponent::mouseDown (const juce::MouseEvent& e)
 
     if (fileToLoad.isNotEmpty())
     {
-        int idx = processor.addSample (fileToLoad);
-        if (idx >= 0)
-        {
-            juce::ScopedLock sl (processor.lock);
-            auto& c = processor.circles[(size_t) idx];
-            juce::Random rng;
-            c->pos.x = rng.nextFloat() * 0.84f + 0.08f;
-            c->pos.y = rng.nextFloat() * 0.70f + 0.10f;
-        }
+        processor.addSample (fileToLoad);
         repaint();
     }
 }
@@ -297,20 +289,13 @@ void SidebarComponent::mouseWheelMove (const juce::MouseEvent&, const juce::Mous
     repaint();
 }
 
-bool SidebarComponent::isAudioFile (const juce::String& path) const
-{
-    auto ext = juce::File (path).getFileExtension().toLowerCase();
-    return ext == ".wav" || ext == ".mp3" || ext == ".aif" ||
-           ext == ".aiff" || ext == ".ogg" || ext == ".flac";
-}
-
 void SidebarComponent::scanFolder (const juce::File& folder)
 {
     for (auto& child : folder.findChildFiles (juce::File::findFilesAndDirectories, false))
     {
         if (child.isDirectory())
             scanFolder (child);
-        else if (isAudioFile (child.getFullPathName()))
+        else if (SoundGridProcessor::isAudioFile (child.getFullPathName()))
             processor.availableFiles.push_back (child.getFullPathName());
     }
 }
@@ -327,7 +312,7 @@ void SidebarComponent::filesDropped (const juce::StringArray& files, int, int)
         juce::File f (path);
         if (f.isDirectory())
             scanFolder (f);
-        else if (isAudioFile (path))
+        else if (SoundGridProcessor::isAudioFile (path))
             processor.availableFiles.push_back (path);
     }
     repaint();

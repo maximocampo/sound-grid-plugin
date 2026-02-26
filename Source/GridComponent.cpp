@@ -375,17 +375,10 @@ bool GridComponent::keyPressed (const juce::KeyPress& key)
     return false;
 }
 
-bool GridComponent::isAudioFile (const juce::String& path) const
-{
-    auto ext = juce::File (path).getFileExtension().toLowerCase();
-    return ext == ".wav" || ext == ".mp3" || ext == ".aif" ||
-           ext == ".aiff" || ext == ".ogg" || ext == ".flac";
-}
-
 bool GridComponent::isInterestedInFileDrag (const juce::StringArray& files)
 {
     for (auto& f : files)
-        if (isAudioFile (f))
+        if (SoundGridProcessor::isAudioFile (f))
             return true;
     return false;
 }
@@ -393,19 +386,8 @@ bool GridComponent::isInterestedInFileDrag (const juce::StringArray& files)
 void GridComponent::filesDropped (const juce::StringArray& files, int /*x*/, int /*y*/)
 {
     for (auto& f : files)
-    {
-        if (isAudioFile (f))
-        {
-            int idx = processor.addSample (f);
-            if (idx >= 0)
-            {
-                juce::ScopedLock sl (processor.lock);
-                auto& c = processor.circles[idx];
-                juce::Random rng;
-                c->pos.x = rng.nextFloat() * 0.84f + 0.08f;
-                c->pos.y = rng.nextFloat() * 0.70f + 0.10f;
-            }
-        }
-    }
+        if (SoundGridProcessor::isAudioFile (f))
+            processor.addSample (f);
+
     if (onCirclesChanged) onCirclesChanged();
 }

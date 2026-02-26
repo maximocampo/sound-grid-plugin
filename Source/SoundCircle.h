@@ -45,7 +45,6 @@ public:
 	juce::Point<float> pos { 0.5f, 0.5f };
 
 	bool isPlaying = false;
-	bool isCarried = false;
 	bool isLoaded = false;
 	bool isSelected = false;
 	bool isRecording = false;

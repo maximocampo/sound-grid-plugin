@@ -29,7 +29,6 @@ private:
 
     float maxScroll() const;
     void scanFolder (const juce::File& folder);
-    bool isAudioFile (const juce::String& path) const;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SidebarComponent)
 };

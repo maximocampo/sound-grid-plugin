@@ -50,7 +50,6 @@ private:
     juce::Point<float> lastMousePos;
 
     juce::Rectangle<float> getContentRect() const;
-    bool isAudioFile (const juce::String& path) const;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GridComponent)
 };

@@ -6,7 +6,7 @@ class SampleVoice
 public:
     SampleVoice();
 
-    bool loadFromBuffer (juce::AudioBuffer<float>& decoded, double fileSampleRate, double hostSampleRate);
+    bool loadFromBuffer (juce::AudioBuffer<float>& decoded, double fileSampleRate);
 
     void play();
     void stop();
@@ -22,15 +22,11 @@ public:
     // Returns playback position 0-1
     float getPlaybackPosition() const;
 
-    // Duration in seconds
-    double getDuration() const;
-
 private:
     juce::AudioBuffer<float> buffer;
     int64_t readPosition = 0;
     bool playing = false;
     bool loaded = false;
-    bool looping = true;
 
     float gain = 1.0f;
     float pan = 0.0f;        // -1 left, 0 center, 1 right

@@ -2,13 +2,11 @@
 
 SampleVoice::SampleVoice() {}
 
-bool SampleVoice::loadFromBuffer (juce::AudioBuffer<float>& decoded, double fileSampleRate, double /*hostSampleRate*/)
+bool SampleVoice::loadFromBuffer (juce::AudioBuffer<float>& decoded, double fileSampleRate)
 {
     if (decoded.getNumSamples() == 0)
         return false;
 
-    // For simplicity, store at file sample rate. Resampling could be added later.
-    // If rates differ significantly, we'd resample here.
     buffer.makeCopyOf (decoded);
     sampleRate = fileSampleRate;
     numSourceSamples = buffer.getNumSamples();
@@ -52,12 +50,6 @@ float SampleVoice::getPlaybackPosition() const
 {
     if (! loaded || numSourceSamples == 0) return 0.0f;
     return (float) readPosition / (float) numSourceSamples;
-}
-
-double SampleVoice::getDuration() const
-{
-    if (! loaded || sampleRate <= 0.0) return 0.0;
-    return (double) numSourceSamples / sampleRate;
 }
 
 void SampleVoice::getNextBlock (juce::AudioBuffer<float>& output, int numSamples)
@@ -119,14 +111,6 @@ void SampleVoice::getNextBlock (juce::AudioBuffer<float>& output, int numSamples
         // Advance read position
         readPosition++;
         if (readPosition >= numSourceSamples)
-        {
-            if (looping)
-                readPosition = 0;
-            else
-            {
-                playing = false;
-                readPosition = 0;
-            }
-        }
+            readPosition = 0;
     }
 }
